@@ -1,282 +1,4 @@
-
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-#app{padding:1rem 0}
-.toolbar{display:flex;gap:8px;margin-bottom:1.25rem;flex-wrap:wrap;align-items:center}
-.toolbar input[type=text]{flex:1;min-width:130px}
-.toolbar select{width:120px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:12px}
-.card{background:#fff;border:0.5px solid rgba(0,0,0,.12);border-radius:12px;overflow:hidden;cursor:pointer;transition:border-color .15s}
-.card:hover{border-color:rgba(0,0,0,.3)}
-.card-img{width:100%;aspect-ratio:1;background:#f5f5f5;display:flex;align-items:center;justify-content:center;overflow:hidden}
-.card-img img{width:100%;height:100%;object-fit:contain}
-.card-body{padding:10px 12px}
-.card-name{font-size:14px;font-weight:500;color:#111;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.card-meta{font-size:12px;color:#777;margin-top:2px}
-.badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:99px;margin-top:5px}
-.b-actor{background:#dbeafe;color:#1e40af}
-.b-music{background:#fef3c7;color:#92400e}
-.b-sport{background:#d1fae5;color:#065f46}
-.b-other{background:#f3f4f6;color:#374151}
-.empty{text-align:center;padding:3rem;color:#aaa;font-size:14px;grid-column:1/-1}
-.mwrap{min-height:520px;background:rgba(0,0,0,.42);display:flex;align-items:center;justify-content:center;padding:1rem;margin-top:1rem;border-radius:12px}
-.modal{background:#fff;border-radius:12px;border:0.5px solid rgba(0,0,0,.1);width:100%;max-width:500px}
-.mhead{padding:1rem 1.25rem;border-bottom:0.5px solid rgba(0,0,0,.1);display:flex;justify-content:space-between;align-items:center}
-.mhead h2{font-size:16px;font-weight:500;color:#111}
-.mbody{padding:1.25rem;max-height:62vh;overflow-y:auto}
-.mimg{width:100%;max-height:220px;object-fit:contain;background:#f5f5f5;border-radius:8px;margin-bottom:1rem}
-.mph{width:100%;height:110px;background:#f5f5f5;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#bbb;font-size:13px;margin-bottom:1rem;gap:8px}
-.fr{display:flex;gap:8px;margin-bottom:10px;align-items:flex-start}
-.fr label{font-size:13px;color:#666;min-width:72px;padding-top:9px}
-.fr input,.fr select,.fr textarea{flex:1;font-size:13px;border:1px solid #ddd;border-radius:6px;padding:7px 10px;background:#fff;color:#111;outline:none}
-.fr input:focus,.fr select:focus,.fr textarea:focus{border-color:#60a5fa}
-.fr textarea{resize:vertical;min-height:54px}
-.dt{width:100%;font-size:13px;border-collapse:collapse}
-.dt td{padding:5px 0;vertical-align:top;color:#111}
-.dt td:first-child{color:#777;width:76px}
-.ar{display:flex;gap:8px;margin-top:1rem;justify-content:flex-end;flex-wrap:wrap}
-.ar button{font-size:13px;padding:6px 14px;border:1px solid #ddd;border-radius:6px;background:#fff;cursor:pointer;color:#111}
-.ar button:hover{background:#f5f5f5}
-.btn-del{color:#dc2626;border-color:#fca5a5}
-.btn-ok{background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe}
-.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;gap:8px;flex-wrap:wrap}
-.top-btns{display:flex;gap:6px;flex-wrap:wrap}
-.top-btns button{font-size:12px;padding:5px 10px;border:1px solid #ddd;border-radius:6px;background:#fff;cursor:pointer;color:#111;display:flex;align-items:center;gap:4px}
-.top-btns button:hover{background:#f5f5f5}
-.btn-html{background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe;font-weight:500}
-.uz{border:1.5px dashed #ccc;border-radius:8px;padding:.9rem;text-align:center;cursor:pointer;font-size:13px;color:#888;margin-bottom:4px}
-.uz:hover{background:#f9fafb}
-.uz input{display:none}
-.sl{font-size:12px;font-weight:500;color:#666;margin-bottom:6px}
-.isec{border:0.5px solid #e5e7eb;border-radius:8px;padding:10px;margin-bottom:10px}
-.psm{width:100%;max-height:110px;object-fit:contain;border-radius:6px;margin-top:6px;background:#f5f5f5;display:none}
-.prog{font-size:12px;color:#888;margin-top:4px;min-height:14px}
-.imp-area{border:1.5px dashed #ccc;border-radius:8px;padding:1rem;text-align:center;cursor:pointer;font-size:13px;color:#888;margin-bottom:8px}
-.imp-area input{display:none}
-.imp-area:hover{background:#f9fafb}
-</style>
-
-<div id="app">
-  <div class="top-bar">
-    <div style="display:flex;align-items:baseline;gap:6px">
-      <span style="font-size:16px;font-weight:500;color:#111">サイン帳</span>
-      <span style="font-size:12px;color:#888" id="cnt"></span>
-    </div>
-    <div class="top-btns">
-      <button onclick="exportHTML()" class="btn-html" title="このアプリ＋全データをHTMLファイルとして保存。ブラウザで直接開けます"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-1px"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> アプリ保存</button>
-      <button onclick="exportJSON()" title="データをJSONでバックアップ"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-1px"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> JSON</button>
-      <button onclick="exportCSV()" title="テキスト情報をCSVで保存"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-1px"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> CSV</button>
-      <button onclick="openImport()" title="JSONをインポートして復元"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-1px"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" transform="rotate(180 12 12)"/></svg> インポート</button>
-      <button onclick="openAdd()" style="font-weight:500"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-1px"><path d="M12 5v14M5 12h14"/></svg> 追加</button>
-    </div>
-  </div>
-  <div class="toolbar">
-    <input type="text" id="search" placeholder="名前・カテゴリで検索…" oninput="render()">
-    <select id="catF" onchange="render()">
-      <option value="">すべて</option>
-      <option value="俳優・女優">俳優・女優</option>
-      <option value="ミュージシャン">ミュージシャン</option>
-      <option value="スポーツ選手">スポーツ選手</option>
-      <option value="その他">その他</option>
-    </select>
-    <select id="sortF" onchange="render()">
-      <option value="new">新しい順</option>
-      <option value="name">名前順</option>
-      <option value="cat">カテゴリ順</option>
-    </select>
-  </div>
-  <div class="grid" id="grid"></div>
-  <div id="mroot"></div>
-</div>
-
-<script>
-let DB=JSON.parse(localStorage.getItem('ag_db')||'[]');
-let nid=Math.max(0,...DB.map(d=>d.id))+1;
-function sv(){try{localStorage.setItem('ag_db',JSON.stringify(DB))}catch(e){alert('保存容量超過。不要なデータを削除してください。')}}
-function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function bclass(cat){return cat==='俳優・女優'?'b-actor':cat==='ミュージシャン'?'b-music':cat==='スポーツ選手'?'b-sport':'b-other'}
-function imgSrc(d){return d.dataUrl||( d.driveId?`https://drive.google.com/thumbnail?id=${d.driveId}&sz=w400`:'')||(d.imgUrl||'')}
-
-function filtered(){
-  const q=document.getElementById('search').value.toLowerCase();
-  const cat=document.getElementById('catF').value;
-  const s=document.getElementById('sortF').value;
-  let list=DB.filter(d=>(!q||(d.name+d.kana+(d.note||'')+(d.cat||'')).toLowerCase().includes(q))&&(!cat||d.cat===cat));
-  if(s==='name') list.sort((a,b)=>a.kana.localeCompare(b.kana,'ja'));
-  else if(s==='cat') list.sort((a,b)=>(a.cat||'').localeCompare(b.cat||'','ja'));
-  else list.sort((a,b)=>b.id-a.id);
-  return list;
-}
-
-function render(){
-  const list=filtered();
-  document.getElementById('cnt').textContent=list.length+'件';
-  const g=document.getElementById('grid');
-  if(!list.length){g.innerHTML='<div class="empty">まだサインがありません<br><span style="font-size:12px;margin-top:6px;display:block">「追加」ボタンから登録してください</span></div>';return;}
-  g.innerHTML=list.map(d=>{const src=imgSrc(d);return`<div class="card" onclick="openDetail(${d.id})">
-    <div class="card-img">${src?`<img src="${esc(src)}" alt="${esc(d.name)}" onerror="this.style.opacity='.1'">`:
-      `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5"><path d="M3 17l4-8 4 6 3-4 4 6"/><circle cx="18" cy="6" r="2"/></svg>`}
-    </div>
-    <div class="card-body">
-      <div class="card-name">${esc(d.name)}</div>
-      <div class="card-meta">${esc(d.kana||'')}</div>
-      <span class="badge ${bclass(d.cat)}">${esc(d.cat||'その他')}</span>
-    </div>
-  </div>`}).join('');
-}
-
-function setM(html){document.getElementById('mroot').innerHTML=html}
-function clrM(){document.getElementById('mroot').innerHTML=''}
-
-function openDetail(id){
-  const d=DB.find(x=>x.id===id);if(!d)return;
-  const src=imgSrc(d);
-  setM(`<div class="mwrap"><div class="modal">
-    <div class="mhead"><h2>${esc(d.name)}</h2><button onclick="clrM()" style="border:none;background:none;cursor:pointer;font-size:18px;color:#666">×</button></div>
-    <div class="mbody">
-      ${src?`<img class="mimg" src="${esc(src)}" alt="${esc(d.name)}" onerror="this.style.display='none'">`:
-        `<div class="mph"><span style="font-size:24px;opacity:.3">🖼</span>画像未登録</div>`}
-      <table class="dt">
-        <tr><td>よみ</td><td>${esc(d.kana||'—')}</td></tr>
-        <tr><td>カテゴリ</td><td><span class="badge ${bclass(d.cat)}">${esc(d.cat)}</span></td></tr>
-        <tr><td>メモ</td><td style="white-space:pre-wrap">${esc(d.note||'—')}</td></tr>
-        <tr><td>登録日</td><td>${esc(d.added)}</td></tr>
-        ${d.driveId?`<tr><td>Drive ID</td><td style="font-size:11px;word-break:break-all">${esc(d.driveId)}</td></tr>`:''}
-        ${d.imgUrl?`<tr><td>画像URL</td><td style="font-size:11px;word-break:break-all">${esc(d.imgUrl)}</td></tr>`:''}
-      </table>
-      <div class="ar">
-        <button class="btn-del" onclick="delEntry(${d.id})">削除</button>
-        <button onclick="clrM();openAdd(${d.id})">編集</button>
-        ${d.driveId?`<button onclick="window.open('https://drive.google.com/file/d/${esc(d.driveId)}/view')">Driveで開く</button>`:''}
-      </div>
-    </div>
-  </div></div>`);
-}
-
-let pdu=null;
-function openAdd(eid){
-  const d=eid!=null?DB.find(x=>x.id===eid):null;pdu=null;
-  setM(`<div class="mwrap"><div class="modal">
-    <div class="mhead"><h2>${d?'サインを編集':'サインを追加'}</h2><button onclick="clrM()" style="border:none;background:none;cursor:pointer;font-size:18px;color:#666">×</button></div>
-    <div class="mbody">
-      <div class="fr"><label>名前</label><input id="fn" type="text" placeholder="例: 山田太郎" value="${esc(d?.name||'')}"></div>
-      <div class="fr"><label>よみ</label><input id="fk" type="text" placeholder="例: やまだたろう" value="${esc(d?.kana||'')}"></div>
-      <div class="fr"><label>カテゴリ</label>
-        <select id="fc">${['俳優・女優','ミュージシャン','スポーツ選手','その他'].map(c=>`<option${(d?.cat||'')==c?' selected':''}>${c}</option>`).join('')}</select>
-      </div>
-      <div class="isec">
-        <div class="sl">画像の登録（いずれかひとつ）</div>
-        <div class="fr" style="margin-bottom:6px"><label>画像URL</label><input id="fu" type="text" placeholder="https://…（オークション画像など）" value="${esc(d?.imgUrl||'')}" oninput="pvUrl(this.value)"></div>
-        <div class="fr" style="margin-bottom:8px"><label>Drive ID</label><input id="fd" type="text" placeholder="GoogleドライブファイルID" value="${esc(d?.driveId||'')}"></div>
-        <div class="sl">または手元の写真をアップロード</div>
-        <label class="uz" id="dz"><input type="file" accept="image/*" onchange="hFile(this.files[0])">
-          <span style="font-size:20px;display:block;margin-bottom:4px">↑</span>クリックまたはドロップで選択
-        </label>
-        <div class="prog" id="prog"></div>
-        <img id="pt" class="psm" alt="プレビュー">
-      </div>
-      <div class="fr"><label>メモ</label><textarea id="fm" placeholder="入手経緯・イベント名など">${esc(d?.note||'')}</textarea></div>
-      <div class="ar">
-        <button onclick="clrM()">キャンセル</button>
-        <button class="btn-ok" onclick="saveE(${d?.id??-1})">保存</button>
-      </div>
-    </div>
-  </div></div>`);
-  if(d?.dataUrl){const t=document.getElementById('pt');t.src=d.dataUrl;t.style.display='block';}
-  setupDz();
-}
-
-function pvUrl(url){
-  const t=document.getElementById('pt');if(!t)return;
-  if(url&&url.startsWith('http')){t.src=url;t.style.display='block';t.onerror=()=>t.style.display='none';}
-  else if(!pdu) t.style.display='none';
-}
-
-function setupDz(){
-  const z=document.getElementById('dz');if(!z)return;
-  z.addEventListener('dragover',e=>{e.preventDefault();z.style.background='#f0f9ff'});
-  z.addEventListener('dragleave',()=>z.style.background='');
-  z.addEventListener('drop',e=>{e.preventDefault();z.style.background='';hFile(e.dataTransfer.files[0])});
-}
-
-function hFile(f){
-  if(!f||!f.type.startsWith('image/'))return;
-  document.getElementById('prog').textContent='読み込み中…';
-  const r=new FileReader();
-  r.onload=e=>{
-    pdu=e.target.result;
-    const t=document.getElementById('pt');t.src=pdu;t.style.display='block';
-    document.getElementById('prog').textContent='読み込み完了';
-    document.getElementById('fu').value='';document.getElementById('fd').value='';
-  };
-  r.readAsDataURL(f);
-}
-
-function saveE(id){
-  const name=document.getElementById('fn').value.trim();
-  if(!name){alert('名前を入力してください');return;}
-  const obj={name,kana:document.getElementById('fk').value.trim(),cat:document.getElementById('fc').value,
-    imgUrl:document.getElementById('fu').value.trim(),driveId:document.getElementById('fd').value.trim(),
-    note:document.getElementById('fm').value.trim()};
-  if(id===-1){DB.push({id:nid++,...obj,dataUrl:pdu||null,added:new Date().toISOString().slice(0,10)});}
-  else{const d=DB.find(x=>x.id===id);if(d){Object.assign(d,obj);if(pdu)d.dataUrl=pdu;}}
-  sv();clrM();render();
-}
-
-function delEntry(id){
-  if(!confirm('このサインを削除しますか？'))return;
-  DB=DB.filter(x=>x.id!==id);sv();clrM();render();
-}
-
-function dl(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();URL.revokeObjectURL(a.href)}
-
-function exportJSON(){
-  if(!DB.length){alert('データがありません');return;}
-  dl(new Blob([JSON.stringify(DB,null,2)],{type:'application/json'}),'autograph_backup.json');
-}
-
-function exportCSV(){
-  if(!DB.length){alert('データがありません');return;}
-  const rows=[['ID','名前','よみ','カテゴリ','メモ','登録日','DriveID','画像URL']];
-  DB.forEach(d=>rows.push([d.id,d.name,d.kana||'',d.cat||'',d.note||'',d.added||'',d.driveId||'',d.imgUrl||'']));
-  const csv='\uFEFF'+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\r\n');
-  dl(new Blob([csv],{type:'text/csv'}),'autograph_list.csv');
-}
-
-function openImport(){
-  setM(`<div class="mwrap"><div class="modal">
-    <div class="mhead"><h2>JSONをインポート</h2><button onclick="clrM()" style="border:none;background:none;cursor:pointer;font-size:18px;color:#666">×</button></div>
-    <div class="mbody">
-      <p style="font-size:13px;color:#666;margin-bottom:12px;line-height:1.6">以前エクスポートしたJSONファイルを選択してください。<br>既存のデータに追記されます（重複はスキップ）。</p>
-      <label class="imp-area"><input type="file" accept=".json" onchange="doImport(this.files[0])">
-        <span style="font-size:20px;display:block;margin-bottom:6px">↑</span>JSONファイルを選択
-      </label>
-      <div id="imp-msg" style="font-size:13px;color:#666;margin-top:8px;min-height:20px"></div>
-      <div class="ar"><button onclick="clrM()">閉じる</button></div>
-    </div>
-  </div></div>`);
-}
-
-function doImport(f){
-  if(!f)return;
-  const r=new FileReader();
-  r.onload=e=>{
-    try{
-      const data=JSON.parse(e.target.result);
-      if(!Array.isArray(data))throw new Error('形式が違います');
-      const existing=new Set(DB.map(d=>d.id));
-      let added=0;
-      data.forEach(d=>{if(!existing.has(d.id)){DB.push(d);added++;}});
-      if(added>0){nid=Math.max(0,...DB.map(d=>d.id))+1;sv();render();}
-      document.getElementById('imp-msg').textContent=`${added}件を追加しました${added<data.length?`（${data.length-added}件は重複スキップ）`:''}`;
-    }catch(err){document.getElementById('imp-msg').textContent='エラー: '+err.message;}
-  };
-  r.readAsText(f);
-}
-
-function exportHTML(){
-  const dbJson=JSON.stringify(DB);
-  const html=`<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
@@ -299,7 +21,7 @@ h1{font-size:18px;font-weight:500}
 .toolbar input{flex:1;min-width:130px}
 .toolbar select{min-width:110px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:12px}
-.card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;cursor:pointer}
+.card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;cursor:pointer;transition:border-color .15s}
 .card:hover{border-color:#aaa}
 .card-img{width:100%;aspect-ratio:1;background:#f5f5f5;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .card-img img{width:100%;height:100%;object-fit:contain}
@@ -307,8 +29,10 @@ h1{font-size:18px;font-weight:500}
 .card-name{font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .card-meta{font-size:12px;color:#777;margin-top:2px}
 .badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:99px;margin-top:5px}
-.b-actor{background:#dbeafe;color:#1e40af}.b-music{background:#fef3c7;color:#92400e}
-.b-sport{background:#d1fae5;color:#065f46}.b-other{background:#f3f4f6;color:#374151}
+.b-actor{background:#dbeafe;color:#1e40af}
+.b-music{background:#fef3c7;color:#92400e}
+.b-sport{background:#d1fae5;color:#065f46}
+.b-other{background:#f3f4f6;color:#374151}
 .empty{text-align:center;padding:3rem;color:#bbb;grid-column:1/-1;font-size:14px}
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center;padding:1rem}
 .overlay.show{display:flex}
@@ -330,18 +54,23 @@ h1{font-size:18px;font-weight:500}
 .ar{display:flex;gap:8px;margin-top:1rem;justify-content:flex-end;flex-wrap:wrap}
 .isec{border:1px solid #e5e7eb;border-radius:8px;padding:10px;margin-bottom:10px}
 .sl{font-size:12px;font-weight:500;color:#666;margin-bottom:6px}
-.uz{border:1.5px dashed #ccc;border-radius:8px;padding:.9rem;text-align:center;cursor:pointer;font-size:13px;color:#888;margin-bottom:4px}
-.uz:hover{background:#f9fafb}.uz input{display:none}
+.uz{border:1.5px dashed #ccc;border-radius:8px;padding:1.5rem 1rem;text-align:center;cursor:pointer;font-size:13px;color:#888;margin-bottom:4px;display:block;width:100%}
+.uz:hover{background:#f9fafb}
+.uz input{display:none}
 .psm{width:100%;max-height:110px;object-fit:contain;border-radius:6px;margin-top:6px;background:#f5f5f5;display:none}
 .prog{font-size:12px;color:#888;margin-top:4px;min-height:14px}
 .imp-area{border:1.5px dashed #ccc;border-radius:8px;padding:1rem;text-align:center;cursor:pointer;font-size:13px;color:#888;margin-bottom:8px}
-.imp-area:hover{background:#f9fafb}.imp-area input{display:none}
+.imp-area:hover{background:#f9fafb}
+.imp-area input{display:none}
 </style>
 </head>
 <body>
 <div id="app">
   <div class="top-bar">
-    <div style="display:flex;align-items:baseline;gap:6px"><h1>サイン帳</h1><span style="font-size:12px;color:#888" id="cnt"></span></div>
+    <div style="display:flex;align-items:baseline;gap:6px">
+      <h1>サイン帳</h1>
+      <span style="font-size:12px;color:#888" id="cnt"></span>
+    </div>
     <div class="top-btns">
       <button onclick="exportHTML()" class="btn-html">アプリ保存</button>
       <button onclick="exportJSON()">JSON</button>
@@ -367,80 +96,261 @@ h1{font-size:18px;font-weight:500}
   </div>
   <div class="grid" id="grid"></div>
 </div>
-<div class="overlay" id="ov" onclick="if(event.target===this)clrM()"><div class="modal" id="modal"></div></div>
+
+<div class="overlay" id="ov" onclick="if(event.target===this)clrM()">
+  <div class="modal" id="modal"></div>
+</div>
+
 <script>
-let DB=${dbJson};
-let nid=Math.max(0,...DB.map(d=>d.id),0)+1;
-function sv(){try{localStorage.setItem('ag_db',JSON.stringify(DB))}catch(e){alert('保存容量超過')}}
-function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function bc(cat){return cat==='俳優・女優'?'b-actor':cat==='ミュージシャン'?'b-music':cat==='スポーツ選手'?'b-sport':'b-other'}
-function iSrc(d){return d.dataUrl||(d.driveId?'https://drive.google.com/thumbnail?id='+d.driveId+'&sz=w400':'')|| d.imgUrl||''}
-function filtered(){
-  const q=document.getElementById('search').value.toLowerCase();
-  const cat=document.getElementById('catF').value;
-  const s=document.getElementById('sortF').value;
-  let list=DB.filter(d=>(!q||(d.name+d.kana+(d.note||'')+(d.cat||'')).toLowerCase().includes(q))&&(!cat||d.cat===cat));
-  if(s==='name')list.sort((a,b)=>a.kana.localeCompare(b.kana,'ja'));
-  else if(s==='cat')list.sort((a,b)=>(a.cat||'').localeCompare(b.cat||'','ja'));
+let DB = [];
+let nid = 1;
+
+function sv() {
+  try { localStorage.setItem('ag_db', JSON.stringify(DB)); }
+  catch(e) { alert('保存容量超過。不要なデータを削除してください。'); }
+}
+
+function esc(s) {
+  return String(s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function bc(cat) {
+  return cat==='俳優・女優'?'b-actor':cat==='ミュージシャン'?'b-music':cat==='スポーツ選手'?'b-sport':'b-other';
+}
+
+function iSrc(d) {
+  return d.dataUrl || (d.driveId ? 'https://drive.google.com/thumbnail?id='+d.driveId+'&sz=w400' : '') || d.imgUrl || '';
+}
+
+function filtered() {
+  const q = document.getElementById('search').value.toLowerCase();
+  const cat = document.getElementById('catF').value;
+  const s = document.getElementById('sortF').value;
+  let list = DB.filter(d =>
+    (!q || (d.name+d.kana+(d.note||'')+(d.cat||'')).toLowerCase().includes(q)) &&
+    (!cat || d.cat===cat)
+  );
+  if(s==='name') list.sort((a,b)=>a.kana.localeCompare(b.kana,'ja'));
+  else if(s==='cat') list.sort((a,b)=>(a.cat||'').localeCompare(b.cat||'','ja'));
   else list.sort((a,b)=>b.id-a.id);
   return list;
 }
-function render(){
-  const list=filtered();
-  document.getElementById('cnt').textContent=list.length+'件';
-  const g=document.getElementById('grid');
-  if(!list.length){g.innerHTML='<div class="empty">まだサインがありません</div>';return;}
-  g.innerHTML=list.map(d=>{const src=iSrc(d);return'<div class="card" onclick="openDetail('+d.id+')"><div class="card-img">'+(src?'<img src="'+esc(src)+'" alt="'+esc(d.name)+'" onerror="this.style.opacity=\\'.1\\'">':'<span style="font-size:36px;opacity:.2">🖼</span>')+'</div><div class="card-body"><div class="card-name">'+esc(d.name)+'</div><div class="card-meta">'+esc(d.kana||'')+'</div><span class="badge '+bc(d.cat)+'">'+esc(d.cat||'その他')+'</span></div></div>';}).join('');
-}
-function setM(html){document.getElementById('modal').innerHTML=html;document.getElementById('ov').classList.add('show')}
-function clrM(){document.getElementById('ov').classList.remove('show')}
-function openDetail(id){
-  const d=DB.find(x=>x.id===id);if(!d)return;
-  const src=iSrc(d);
-  setM('<div class="mhead"><h2>'+esc(d.name)+'</h2><button onclick="clrM()">×</button></div><div class="mbody">'+(src?'<img class="mimg" src="'+esc(src)+'" alt="'+esc(d.name)+'" onerror="this.style.display=\\'none\\'">':'<div class="mph">画像未登録</div>')+'<table class="dt"><tr><td>よみ</td><td>'+esc(d.kana||'—')+'</td></tr><tr><td>カテゴリ</td><td><span class="badge '+bc(d.cat)+'">'+esc(d.cat)+'</span></td></tr><tr><td>メモ</td><td style="white-space:pre-wrap">'+esc(d.note||'—')+'</td></tr><tr><td>登録日</td><td>'+esc(d.added)+'</td></tr></table><div class="ar"><button class="btn-del" onclick="delE('+d.id+')">削除</button><button onclick="clrM();openAdd('+d.id+')">編集</button>'+(d.driveId?'<button onclick="window.open(\\'https://drive.google.com/file/d/'+esc(d.driveId)+'/view\\')">Driveで開く</button>':'')+'</div></div>');
-}
-let pdu=null;
-function openAdd(eid){
-  const d=eid!=null?DB.find(x=>x.id===eid):null;pdu=null;
-  setM('<div class="mhead"><h2>'+(d?'サインを編集':'サインを追加')+'</h2><button onclick="clrM()">×</button></div><div class="mbody"><div class="fr"><label>名前</label><input id="fn" type="text" placeholder="例: 山田太郎" value="'+esc(d?.name||'')+'"></div><div class="fr"><label>よみ</label><input id="fk" type="text" placeholder="例: やまだたろう" value="'+esc(d?.kana||'')+'"></div><div class="fr"><label>カテゴリ</label><select id="fc">'+['俳優・女優','ミュージシャン','スポーツ選手','その他'].map(c=>'<option'+(( d?.cat||'')==c?' selected':'')+'>'+c+'</option>').join('')+'</select></div><div class="isec"><div class="sl">画像の登録（いずれかひとつ）</div><div class="fr" style="margin-bottom:6px"><label>画像URL</label><input id="fu" type="text" placeholder="https://…" value="'+esc(d?.imgUrl||'')+'" oninput="pvU(this.value)"></div><div class="fr" style="margin-bottom:8px"><label>Drive ID</label><input id="fd" type="text" placeholder="GoogleドライブファイルID" value="'+esc(d?.driveId||'')+'"></div><div class="sl">または手元の写真をアップロード</div><label class="uz" id="dz"><input type="file" accept="image/*" onchange="hF(this.files[0])"><span style="font-size:20px;display:block;margin-bottom:4px">↑</span>クリックまたはドロップで選択</label><div class="prog" id="prog"></div><img id="pt" class="psm" alt="プレビュー"></div><div class="fr"><label>メモ</label><textarea id="fm" placeholder="入手経緯・イベント名など">'+esc(d?.note||'')+'</textarea></div><div class="ar"><button onclick="clrM()">キャンセル</button><button class="btn-ok" onclick="saveE('+(d?.id??-1)+')">保存</button></div></div>');
-  if(d?.dataUrl){const t=document.getElementById('pt');t.src=d.dataUrl;t.style.display='block';}
-  const z=document.getElementById('dz');
-  z.addEventListener('dragover',e=>{e.preventDefault();z.style.background='#f0f9ff'});
-  z.addEventListener('dragleave',()=>z.style.background='');
-  z.addEventListener('drop',e=>{e.preventDefault();z.style.background='';hF(e.dataTransfer.files[0])});
-}
-function pvU(url){const t=document.getElementById('pt');if(!t)return;if(url&&url.startsWith('http')){t.src=url;t.style.display='block';t.onerror=()=>t.style.display='none';}else if(!pdu)t.style.display='none';}
-function hF(f){if(!f||!f.type.startsWith('image/'))return;document.getElementById('prog').textContent='読み込み中…';const r=new FileReader();r.onload=e=>{pdu=e.target.result;const t=document.getElementById('pt');t.src=pdu;t.style.display='block';document.getElementById('prog').textContent='読み込み完了';document.getElementById('fu').value='';document.getElementById('fd').value='';};r.readAsDataURL(f);}
-function saveE(id){
-  const name=document.getElementById('fn').value.trim();if(!name){alert('名前を入力してください');return;}
-  const obj={name,kana:document.getElementById('fk').value.trim(),cat:document.getElementById('fc').value,imgUrl:document.getElementById('fu').value.trim(),driveId:document.getElementById('fd').value.trim(),note:document.getElementById('fm').value.trim()};
-  if(id===-1){DB.push({id:nid++,...obj,dataUrl:pdu||null,added:new Date().toISOString().slice(0,10)});}
-  else{const d=DB.find(x=>x.id===id);if(d){Object.assign(d,obj);if(pdu)d.dataUrl=pdu;}}
-  sv();clrM();render();
-}
-function delE(id){if(!confirm('削除しますか？'))return;DB=DB.filter(x=>x.id!==id);sv();clrM();render();}
-function dl(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();URL.revokeObjectURL(a.href)}
-function exportJSON(){if(!DB.length){alert('データがありません');return;}dl(new Blob([JSON.stringify(DB,null,2)],{type:'application/json'}),'autograph_backup.json');}
-function exportCSV(){if(!DB.length){alert('データがありません');return;}const rows=[['ID','名前','よみ','カテゴリ','メモ','登録日','DriveID','画像URL']];DB.forEach(d=>rows.push([d.id,d.name,d.kana||'',d.cat||'',d.note||'',d.added||'',d.driveId||'',d.imgUrl||'']));const csv='\\uFEFF'+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\\r\\n');dl(new Blob([csv],{type:'text/csv'}),'autograph_list.csv');}
-function openImport(){setM('<div class="mhead"><h2>JSONをインポート</h2><button onclick="clrM()">×</button></div><div class="mbody"><p style="font-size:13px;color:#666;margin-bottom:12px;line-height:1.6">以前エクスポートしたJSONファイルを選択してください。既存データに追記されます（重複はスキップ）。</p><label class="imp-area"><input type="file" accept=".json" onchange="doImp(this.files[0])"><span style="font-size:20px;display:block;margin-bottom:6px">↑</span>JSONファイルを選択</label><div id="imp-msg" style="font-size:13px;color:#666;min-height:20px"></div><div class="ar"><button onclick="clrM()">閉じる</button></div></div>');}
-function doImp(f){if(!f)return;const r=new FileReader();r.onload=e=>{try{const data=JSON.parse(e.target.result);if(!Array.isArray(data))throw new Error('形式が違います');const ex=new Set(DB.map(d=>d.id));let added=0;data.forEach(d=>{if(!ex.has(d.id)){DB.push(d);added++;}});if(added>0){nid=Math.max(0,...DB.map(d=>d.id))+1;sv();render();}document.getElementById('imp-msg').textContent=added+'件を追加しました'+(added<data.length?'（'+(data.length-added)+'件は重複スキップ）':'');}catch(err){document.getElementById('imp-msg').textContent='エラー: '+err.message;}}; r.readAsText(f);}
-function exportHTML(){
-  const s=new XMLSerializer();
-  const clone=document.documentElement.cloneNode(true);
-  const sc=clone.querySelector('script');
-  if(sc){sc.textContent=sc.textContent.replace(/let DB=.*;/,'let DB='+JSON.stringify(DB)+';');}
-  dl(new Blob(['<!DOCTYPE html>'+clone.outerHTML],{type:'text/html;charset=utf-8'}),'sign_app.html');
-}
-const saved=localStorage.getItem('ag_db');
-if(saved){try{const s=JSON.parse(saved);if(s.length>DB.length){DB=s;nid=Math.max(0,...DB.map(d=>d.id))+1;}}catch(e){}}
-render();
-<\/script>
-</body>
-</html>`;
-  dl(new Blob([html],{type:'text/html;charset=utf-8'}),'sign_app.html');
+
+function render() {
+  const list = filtered();
+  document.getElementById('cnt').textContent = list.length+'件';
+  const g = document.getElementById('grid');
+  if(!list.length) {
+    g.innerHTML = '<div class="empty">まだサインがありません<br><span style="font-size:12px;margin-top:6px;display:block">「＋ 追加」ボタンから登録してください</span></div>';
+    return;
+  }
+  g.innerHTML = list.map(d => {
+    const src = iSrc(d);
+    return `<div class="card" onclick="openDetail(${d.id})">
+      <div class="card-img">${src
+        ? `<img src="${esc(src)}" alt="${esc(d.name)}" onerror="this.style.opacity='.1'">`
+        : `<span style="font-size:40px;opacity:.15">✍</span>`}
+      </div>
+      <div class="card-body">
+        <div class="card-name">${esc(d.name)}</div>
+        <div class="card-meta">${esc(d.kana||'')}</div>
+        <span class="badge ${bc(d.cat)}">${esc(d.cat||'その他')}</span>
+      </div>
+    </div>`;
+  }).join('');
 }
 
-const saved=localStorage.getItem('ag_db');
-if(saved){try{const s=JSON.parse(saved);if(s.length>0){DB=s;nid=Math.max(0,...DB.map(d=>d.id))+1;}}catch(e){}}
+function setM(html) {
+  document.getElementById('modal').innerHTML = html;
+  document.getElementById('ov').classList.add('show');
+}
+function clrM() {
+  document.getElementById('ov').classList.remove('show');
+}
+
+function openDetail(id) {
+  const d = DB.find(x=>x.id===id); if(!d) return;
+  const src = iSrc(d);
+  setM(`<div class="mhead"><h2>${esc(d.name)}</h2><button onclick="clrM()">×</button></div>
+  <div class="mbody">
+    ${src
+      ? `<img class="mimg" src="${esc(src)}" alt="${esc(d.name)}" onerror="this.style.display='none'">`
+      : `<div class="mph">画像未登録</div>`}
+    <table class="dt">
+      <tr><td>よみ</td><td>${esc(d.kana||'—')}</td></tr>
+      <tr><td>カテゴリ</td><td><span class="badge ${bc(d.cat)}">${esc(d.cat)}</span></td></tr>
+      <tr><td>メモ</td><td style="white-space:pre-wrap">${esc(d.note||'—')}</td></tr>
+      <tr><td>登録日</td><td>${esc(d.added)}</td></tr>
+      ${d.driveId?`<tr><td>Drive ID</td><td style="font-size:11px;word-break:break-all">${esc(d.driveId)}</td></tr>`:''}
+      ${d.imgUrl?`<tr><td>画像URL</td><td style="font-size:11px;word-break:break-all">${esc(d.imgUrl)}</td></tr>`:''}
+    </table>
+    <div class="ar">
+      <button class="btn-del" onclick="delE(${d.id})">削除</button>
+      <button onclick="clrM();openAdd(${d.id})">編集</button>
+      ${d.driveId?`<button onclick="window.open('https://drive.google.com/file/d/${esc(d.driveId)}/view')">Driveで開く</button>`:''}
+    </div>
+  </div>`);
+}
+
+let pdu = null;
+
+function openAdd(eid) {
+  const d = eid!=null ? DB.find(x=>x.id===eid) : null;
+  pdu = null;
+  setM(`<div class="mhead"><h2>${d?'サインを編集':'サインを追加'}</h2><button onclick="clrM()">×</button></div>
+  <div class="mbody">
+    <div class="fr"><label>名前</label><input id="fn" type="text" placeholder="例: 山田太郎" value="${esc(d?.name||'')}"></div>
+    <div class="fr"><label>よみ</label><input id="fk" type="text" placeholder="例: やまだたろう" value="${esc(d?.kana||'')}"></div>
+    <div class="fr"><label>カテゴリ</label>
+      <select id="fc">${['俳優・女優','ミュージシャン','スポーツ選手','その他'].map(c=>`<option${(d?.cat||'')==c?' selected':''}>${c}</option>`).join('')}</select>
+    </div>
+    <div class="isec">
+      <div class="sl">画像の登録（いずれかひとつ）</div>
+      <div class="fr" style="margin-bottom:6px">
+        <label>画像URL</label>
+        <input id="fu" type="text" placeholder="https://…（オークション画像など）" value="${esc(d?.imgUrl||'')}" oninput="pvU(this.value)">
+      </div>
+      <div class="fr" style="margin-bottom:8px">
+        <label>Drive ID</label>
+        <input id="fd" type="text" placeholder="GoogleドライブファイルID" value="${esc(d?.driveId||'')}">
+      </div>
+      <div class="sl">または手元の写真をアップロード</div>
+      <label class="uz" id="dz">
+        <input type="file" accept="image/*" onchange="hF(this.files[0])">
+        <span style="font-size:28px;display:block;margin-bottom:6px">↑</span>
+        <span>クリックまたはドロップで写真を選択</span>
+      </label>
+      <div class="prog" id="prog"></div>
+      <img id="pt" class="psm" alt="プレビュー">
+    </div>
+    <div class="fr"><label>メモ</label><textarea id="fm" placeholder="入手経緯・イベント名など">${esc(d?.note||'')}</textarea></div>
+    <div class="ar">
+      <button onclick="clrM()">キャンセル</button>
+      <button class="btn-ok" onclick="saveE(${d?.id??-1})">保存</button>
+    </div>
+  </div>`);
+  if(d?.dataUrl) { const t=document.getElementById('pt'); t.src=d.dataUrl; t.style.display='block'; }
+  const z = document.getElementById('dz');
+  z.addEventListener('dragover', e=>{e.preventDefault();z.style.background='#f0f9ff'});
+  z.addEventListener('dragleave', ()=>z.style.background='');
+  z.addEventListener('drop', e=>{e.preventDefault();z.style.background='';hF(e.dataTransfer.files[0])});
+}
+
+function pvU(url) {
+  const t = document.getElementById('pt'); if(!t) return;
+  if(url && url.startsWith('http')) { t.src=url; t.style.display='block'; t.onerror=()=>t.style.display='none'; }
+  else if(!pdu) t.style.display='none';
+}
+
+function hF(f) {
+  if(!f || !f.type.startsWith('image/')) return;
+  document.getElementById('prog').textContent = '読み込み中…';
+  const r = new FileReader();
+  r.onload = e => {
+    pdu = e.target.result;
+    const t = document.getElementById('pt'); t.src=pdu; t.style.display='block';
+    document.getElementById('prog').textContent = '読み込み完了';
+    document.getElementById('fu').value = '';
+    document.getElementById('fd').value = '';
+  };
+  r.readAsDataURL(f);
+}
+
+function saveE(id) {
+  const name = document.getElementById('fn').value.trim();
+  if(!name) { alert('名前を入力してください'); return; }
+  const obj = {
+    name, kana: document.getElementById('fk').value.trim(),
+    cat: document.getElementById('fc').value,
+    imgUrl: document.getElementById('fu').value.trim(),
+    driveId: document.getElementById('fd').value.trim(),
+    note: document.getElementById('fm').value.trim()
+  };
+  if(id===-1) {
+    DB.push({id:nid++, ...obj, dataUrl:pdu||null, added:new Date().toISOString().slice(0,10)});
+  } else {
+    const d = DB.find(x=>x.id===id);
+    if(d) { Object.assign(d, obj); if(pdu) d.dataUrl=pdu; }
+  }
+  sv(); clrM(); render();
+}
+
+function delE(id) {
+  if(!confirm('このサインを削除しますか？')) return;
+  DB = DB.filter(x=>x.id!==id); sv(); clrM(); render();
+}
+
+function dl(blob, name) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = name; a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function exportJSON() {
+  if(!DB.length) { alert('データがありません'); return; }
+  dl(new Blob([JSON.stringify(DB,null,2)], {type:'application/json'}), 'autograph_backup.json');
+}
+
+function exportCSV() {
+  if(!DB.length) { alert('データがありません'); return; }
+  const rows = [['ID','名前','よみ','カテゴリ','メモ','登録日','DriveID','画像URL']];
+  DB.forEach(d => rows.push([d.id,d.name,d.kana||'',d.cat||'',d.note||'',d.added||'',d.driveId||'',d.imgUrl||'']));
+  const csv = '\uFEFF' + rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\r\n');
+  dl(new Blob([csv], {type:'text/csv'}), 'autograph_list.csv');
+}
+
+function openImport() {
+  setM(`<div class="mhead"><h2>JSONをインポート</h2><button onclick="clrM()">×</button></div>
+  <div class="mbody">
+    <p style="font-size:13px;color:#666;margin-bottom:12px;line-height:1.6">
+      以前エクスポートしたJSONファイルを選択してください。<br>既存データに追記されます（重複はスキップ）。
+    </p>
+    <label class="imp-area">
+      <input type="file" accept=".json" onchange="doImp(this.files[0])">
+      <span style="font-size:20px;display:block;margin-bottom:6px">↑</span>
+      JSONファイルを選択
+    </label>
+    <div id="imp-msg" style="font-size:13px;color:#666;min-height:20px"></div>
+    <div class="ar"><button onclick="clrM()">閉じる</button></div>
+  </div>`);
+}
+
+function doImp(f) {
+  if(!f) return;
+  const r = new FileReader();
+  r.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if(!Array.isArray(data)) throw new Error('形式が違います');
+      const ex = new Set(DB.map(d=>d.id));
+      let added = 0;
+      data.forEach(d => { if(!ex.has(d.id)) { DB.push(d); added++; } });
+      if(added>0) { nid=Math.max(0,...DB.map(d=>d.id))+1; sv(); render(); }
+      document.getElementById('imp-msg').textContent =
+        added+'件を追加しました'+(added<data.length?'（'+(data.length-added)+'件は重複スキップ）':'');
+    } catch(err) {
+      document.getElementById('imp-msg').textContent = 'エラー: '+err.message;
+    }
+  };
+  r.readAsText(f);
+}
+
+function exportHTML() {
+  const dbJson = JSON.stringify(DB);
+  const thisHTML = document.documentElement.outerHTML
+    .replace(/let DB = \[\];/, 'let DB = '+dbJson+';')
+    .replace(/let nid = 1;/, 'let nid = '+nid+';');
+  dl(new Blob(['<!DOCTYPE html>'+thisHTML], {type:'text/html;charset=utf-8'}), 'sign_app.html');
+}
+
+const saved = localStorage.getItem('ag_db');
+if(saved) {
+  try {
+    DB = JSON.parse(saved);
+    nid = Math.max(0, ...DB.map(d=>d.id)) + 1;
+  } catch(e) {}
+}
 render();
 </script>
+</body>
+</html>
